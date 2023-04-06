@@ -1,3 +1,11 @@
+data_train
+data_test
+meta
+
+
+
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

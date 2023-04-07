@@ -8,17 +8,16 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 
-def open_f(filename, back=1):
-    filepath = os.path.join('../' * back, 'data', filename)
+def open_f(filename):
+    filepath = os.path.join('..', 'data', filename)
     with open(filepath, 'rb') as f:
         return pickle.load(f)
 
 
 class DataSequence(tf.keras.utils.Sequence):
     def __init__(self, x_set, y_set, transform=None, batch_size=512):
-        shuffle = np.random.permutation(y_set.shape[0])
-        self.x = x_set[shuffle]
-        self.y = y_set[shuffle]
+        self.x = x_set
+        self.y = y_set
         self.transform = transform
         self.batch_size = batch_size
 
@@ -32,15 +31,18 @@ class DataSequence(tf.keras.utils.Sequence):
         batch_x, batch_y = batch_x[shuffle], batch_y[shuffle]
         if self.transform:
             return (
-                np.array([np.asarray(self.transform(Image.fromarray(np.uint8(x)))) / 255. for x in batch_x]),
+                np.array([np.asarray(
+                    self.transform(Image.fromarray(np.uint8(x)))) / 255.
+                    for x in batch_x
+                ]),
                 batch_y
             )
         return batch_x / 255, batch_y
 
 
-def get_ds(transform=None, batch_size=512, val_size=0.03, back=1):
-    data_all = open_f('data_train', back)
-    data_test = open_f('data_test', back)
+def get_ds(transform=None, batch_size=512, val_size=0.03):
+    data_all = open_f('data_train')
+    data_test = open_f('data_test')
 
     shuffle = np.random.permutation(data_all['images'].shape[0])
     train_images_full = data_all['images'][shuffle]

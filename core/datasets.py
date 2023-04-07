@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 
 def open_f(filename, back=2):
     filepath = os.path.join('..\\' * back, 'data', filename)
+    print(filepath)
     with open(filepath, 'rb') as f:
         return pickle.load(f)
 

@@ -8,8 +8,8 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 
-def open_f(filename):
-    filepath = os.path.join('..', 'data', filename)
+def open_f(filename, back=2):
+    filepath = os.path.join('..\\' * back, 'data', filename)
     with open(filepath, 'rb') as f:
         return pickle.load(f)
 
@@ -40,9 +40,9 @@ class DataSequence(tf.keras.utils.Sequence):
         return batch_x / 255, batch_y
 
 
-def get_ds(transform=None, batch_size=512, val_size=0.03):
-    data_all = open_f('data_train')
-    data_test = open_f('data_test')
+def get_ds(transform=None, batch_size=512, val_size=0.03, back=2):
+    data_all = open_f('data_train', back)
+    data_test = open_f('data_test', back)
 
     shuffle = np.random.permutation(data_all['images'].shape[0])
     train_images_full = data_all['images'][shuffle]

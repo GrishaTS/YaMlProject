@@ -5,6 +5,7 @@ from PIL import Image
 import math
 import tensorflow as tf
 import numpy as np
+import torchvision
 from sklearn.model_selection import train_test_split
 
 
@@ -16,8 +17,10 @@ def open_f(filename, back=2):
 
 class DataSequence(tf.keras.utils.Sequence):
     def __init__(self, x_set, y_set, transform=None, batch_size=512):
-        self.x = x_set
-        self.y = y_set
+        shuffle = np.random.permutation(y_set.shape[0])
+        # список индексов для shuffle
+        self.x = x_set[shuffle]
+        self.y = y_set[shuffle]
         self.transform = transform
         self.batch_size = batch_size
 
@@ -29,12 +32,15 @@ class DataSequence(tf.keras.utils.Sequence):
         batch_y = self.y[idx * self.batch_size:(idx + 1) * self.batch_size]
         shuffle = np.random.permutation(batch_x.shape[0])
         batch_x, batch_y = batch_x[shuffle], batch_y[shuffle]
-        if self.transform:
+        if type(self.transform) is torchvision.transforms.Compose:
             return (
-                np.array([np.asarray(
-                    self.transform(Image.fromarray(np.uint8(x)))) / 255.
-                    for x in batch_x
-                ]),
+                np.array([np.asarray(self.transform(Image.fromarray(np.uint8(x)))) / 255. for x in batch_x]),
+                batch_y
+            )
+        elif type(self.transform) is list:
+            trans = np.random.choice(self.transform)
+            return (
+                np.array([np.asarray(trans(Image.fromarray(np.uint8(x)))) / 255. for x in batch_x]),
                 batch_y
             )
         return batch_x / 255, batch_y

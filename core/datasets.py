@@ -9,8 +9,7 @@ from sklearn.model_selection import train_test_split
 
 
 def open_f(filename, back=2):
-    filepath = os.path.join('..\\' * back, 'data', filename)
-    print(filepath)
+    filepath = os.path.join('../' * back, 'data', filename)
     with open(filepath, 'rb') as f:
         return pickle.load(f)
 
@@ -41,17 +40,17 @@ class DataSequence(tf.keras.utils.Sequence):
         return batch_x / 255, batch_y
 
 
-def get_ds(transform=None, batch_size=512, val_size=0.03, back=2):
-    data_all = open_f('data_train', back)
-    data_test = open_f('data_test', back)
+def get_ds(file_train, file_test, transform=None, batch_size=512, val_size=0.03, back=2):
+    data_all = open_f(file_train, back)
+    data_test = open_f(file_test, back)
 
     shuffle = np.random.permutation(data_all['images'].shape[0])
     train_images_full = data_all['images'][shuffle]
-    train_labels_full = data_all['labels'][shuffle].ravel()
+    train_labels_full = data_all['labels'][shuffle]
 
     train_ds_x, val_ds_x, train_ds_y, val_ds_y = train_test_split(train_images_full, train_labels_full, test_size=val_size)
 
-    val_ds = tf.data.Dataset.from_tensor_slices((val_ds_x, val_ds_y))
+    val_ds = tf.data.Dataset.from_tensor_slices((val_ds_x / 255., val_ds_y))
     val_ds = val_ds.batch(batch_size)
 
     train_ds = DataSequence(train_ds_x, train_ds_y, transform, batch_size=batch_size)

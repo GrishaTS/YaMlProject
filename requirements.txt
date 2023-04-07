@@ -1,0 +1,8 @@
+keras==2.12.0
+livelossplot==0.5.5
+numpy==1.23.5
+pandas==1.5.3
+Pillow==9.4.0
+scikit-learn==1.2.2
+tensorflow==2.12.0
+torchvision==0.15.1

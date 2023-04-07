@@ -1,0 +1,58 @@
+import pickle
+import os
+
+from PIL import Image
+import math
+import tensorflow as tf
+import numpy as np
+from sklearn.model_selection import train_test_split
+
+
+def open_f(filename, back=1):
+    filepath = os.path.join('../' * back, 'data', filename)
+    with open(filepath, 'rb') as f:
+        return pickle.load(f)
+
+
+class DataSequence(tf.keras.utils.Sequence):
+    def __init__(self, x_set, y_set, transform=None, batch_size=512):
+        shuffle = np.random.permutation(y_set.shape[0])
+        self.x = x_set[shuffle]
+        self.y = y_set[shuffle]
+        self.transform = transform
+        self.batch_size = batch_size
+
+    def __len__(self):
+        return math.ceil(self.y.shape[0] / self.batch_size)
+
+    def __getitem__(self, idx):
+        batch_x = self.x[idx * self.batch_size:(idx + 1) * self.batch_size]
+        batch_y = self.y[idx * self.batch_size:(idx + 1) * self.batch_size]
+        shuffle = np.random.permutation(batch_x.shape[0])
+        batch_x, batch_y = batch_x[shuffle], batch_y[shuffle]
+        if self.transform:
+            return (
+                np.array([np.asarray(self.transform(Image.fromarray(np.uint8(x)))) / 255. for x in batch_x]),
+                batch_y
+            )
+        return batch_x / 255, batch_y
+
+
+def get_ds(transform=None, batch_size=512, val_size=0.03, back=1):
+    data_all = open_f('data_train', back)
+    data_test = open_f('data_test', back)
+
+    shuffle = np.random.permutation(data_all['images'].shape[0])
+    train_images_full = data_all['images'][shuffle]
+    train_labels_full = data_all['labels'][shuffle].ravel()
+
+    train_ds_x, val_ds_x, train_ds_y, val_ds_y = train_test_split(train_images_full, train_labels_full, test_size=val_size)
+
+    val_ds = tf.data.Dataset.from_tensor_slices((val_ds_x, val_ds_y))
+    val_ds = val_ds.batch(batch_size)
+
+    train_ds = DataSequence(train_ds_x, train_ds_y, transform, batch_size=batch_size)
+
+    test_ds = data_test['images'] / 255.
+
+    return train_ds, val_ds, test_ds

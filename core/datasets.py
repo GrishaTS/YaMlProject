@@ -6,7 +6,6 @@ import math
 import tensorflow as tf
 import numpy as np
 import random
-import torchvision
 from sklearn.model_selection import train_test_split
 
 
@@ -18,10 +17,8 @@ def open_f(filename, back=2):
 
 class DataSequence(tf.keras.utils.Sequence):
     def __init__(self, x_set, y_set, transform=None, batch_size=512):
-        shuffle = np.random.permutation(y_set.shape[0])
-        # список индексов для shuffle
-        self.x = x_set[shuffle]
-        self.y = y_set[shuffle]
+        self.x = x_set
+        self.y = y_set
         self.transform = transform
         self.batch_size = batch_size
 
@@ -46,13 +43,15 @@ class DataSequence(tf.keras.utils.Sequence):
         return batch_x / 255, batch_y
 
 
-def get_ds(file_train, file_test, transform=None, batch_size=512, val_size=0.07, back=2):
+def get_ds(file_train, file_test, transform=None, batch_size=512, one_hot=False, val_size=0.07, back=2):
     data_all = open_f(file_train, back)
     data_test = open_f(file_test, back)
 
     shuffle = np.random.permutation(data_all['images'].shape[0])
     train_images_full = data_all['images'][shuffle]
     train_labels_full = data_all['labels'][shuffle]
+    if one_hot:
+        train_labels_full = tf.one_hot(train_labels_full, 10).numpy()
 
     train_ds_x, val_ds_x, train_ds_y, val_ds_y = train_test_split(train_images_full, train_labels_full, test_size=val_size)
 

@@ -5,6 +5,7 @@ from PIL import Image
 import math
 import tensorflow as tf
 import numpy as np
+import random
 import torchvision
 from sklearn.model_selection import train_test_split
 
@@ -38,9 +39,8 @@ class DataSequence(tf.keras.utils.Sequence):
                 batch_y
             )
         elif type(self.transform) is list:
-            trans = np.random.choice(self.transform)
             return (
-                np.array([np.asarray(trans(Image.fromarray(np.uint8(x)))) / 255. for x in batch_x]),
+                np.array([np.asarray(random.choice(self.transform)(Image.fromarray(np.uint8(x)))) / 255. for x in batch_x]),
                 batch_y
             )
         return batch_x / 255, batch_y

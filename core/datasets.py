@@ -32,7 +32,7 @@ class DataSequence(tf.keras.utils.Sequence):
         batch_y = self.y[idx * self.batch_size:(idx + 1) * self.batch_size]
         shuffle = np.random.permutation(batch_x.shape[0])
         batch_x, batch_y = batch_x[shuffle], batch_y[shuffle]
-        if type(self.transform) is torchvision.transforms.Compose:
+        if 'torchvision.transforms' in str(type(self.transform)):
             return (
                 np.array([np.asarray(self.transform(Image.fromarray(np.uint8(x)))) / 255. for x in batch_x]),
                 batch_y
@@ -46,7 +46,7 @@ class DataSequence(tf.keras.utils.Sequence):
         return batch_x / 255, batch_y
 
 
-def get_ds(file_train, file_test, transform=None, batch_size=512, val_size=0.03, back=2):
+def get_ds(file_train, file_test, transform=None, batch_size=512, val_size=0.07, back=2):
     data_all = open_f(file_train, back)
     data_test = open_f(file_test, back)
 

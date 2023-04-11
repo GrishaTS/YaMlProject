@@ -1,7 +1,9 @@
 data_train
 repaired_data_train
 repaired_data_test
-smote_data_train
+smote_data_train_9650
+smote_data_train_7000
+smote_data_train_5000
 data_test
 meta
 

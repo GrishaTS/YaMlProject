@@ -23,3 +23,4 @@ def print_bagging_ensemble_statistic(models, names, x_val, y_val):
 
 def get_accuracy(y_pred, y_true):
     return round(np.sum(y_pred == y_true) / len(y_pred), 4)
+

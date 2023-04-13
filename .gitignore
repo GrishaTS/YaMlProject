@@ -1,6 +1,8 @@
 data_train
 repaired_data_train
 repaired_data_test
+repaired_data_test_gray
+smote_data_train_9650_gray
 smote_data_train_9650
 smote_data_train_7000
 smote_data_train_5000

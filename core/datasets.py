@@ -35,11 +35,6 @@ class DataSequence(tf.keras.utils.Sequence):
                 np.array([np.asarray(self.transform(Image.fromarray(np.uint8(x)))) / 255. for x in batch_x]),
                 batch_y
             )
-        elif type(self.transform) is list:
-            return (
-                np.array([np.asarray(random.choice(self.transform)(Image.fromarray(np.uint8(x)))) / 255. for x in batch_x]),
-                batch_y
-            )
         return batch_x / 255, batch_y
 
 

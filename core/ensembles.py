@@ -24,7 +24,7 @@ def get_ensemble_modelbase(models, names, x_val):
         return
     modelbase = {}
     for i in range(len(names)):
-        modelbase[names[i]] = [models[i], np.array(models[i].predict(x_val, verbose=False))]
+        modelbase[names[i]] = [models[i], np.array(models[i].predict(x_val, verbose=1))]
     return modelbase
 
 

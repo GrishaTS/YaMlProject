@@ -3,8 +3,8 @@ import numpy as np
 
 def get_bagging_pred(modelset, x_val):
     pred_summ = np.full((len(x_val), 10), 0.)
-    for m in modelset[:0]:
-        pred_summ += m.predict(x_val, verbose=False)
+    for m in modelset:
+        pred_summ += m[0].predict(x_val, verbose=False)
     pred_summ = np.array([np.argmax(i) for i in pred_summ])
     return pred_summ
 

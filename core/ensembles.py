@@ -10,6 +10,13 @@ def get_bagging_pred(modelset, x_val):
     return pred_summ
 
 
+def get_raw_bagging_pred(modelset, x_val):
+    pred_summ = np.full((len(x_val), 10), 0.)
+    for m in modelset:
+        pred_summ += m[0].predict(x_val, verbose=True)
+    return pred_summ
+
+
 def print_models_statistic(modelbase, y_val):
     print("SCORE")
     for key in modelbase.keys():

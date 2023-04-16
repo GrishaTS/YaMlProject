@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.metrics import recall_score, precision_score, f1_score, accuracy_score
 
 
 def get_bagging_pred(modelset, x_val):
@@ -9,10 +10,18 @@ def get_bagging_pred(modelset, x_val):
     return pred_summ
 
 
-def print_models_accuracy(modelbase, y_val):
-    print("ACCURACY SCORE")
+def get_raw_bagging_pred(modelset, x_val):
+    pred_summ = np.full((len(x_val), 10), 0.)
+    for m in modelset:
+        pred_summ += m[0].predict(x_val, verbose=True)
+    return pred_summ
+
+
+def print_models_statistic(modelbase, y_val):
+    print("SCORE")
     for key in modelbase.keys():
-        print(f"{key}:", get_accuracy(np.argmax(modelbase[key][1], axis=1), y_val))
+        print(f"{key}:", "accuracy:", accuracy_score(y_val, np.argmax(modelbase[key][1], axis=1)), "f1_score:",
+              f1_score(y_val, np.argmax(modelbase[key][1], axis=1), average="macro"))
 
 
 # Заранее просчитывает предикты для всех моделей, чтобы более быстро определять accuracy с разными комбинациями.
@@ -22,7 +31,7 @@ def get_ensemble_modelbase(models, names, x_val):
         return
     modelbase = {}
     for i in range(len(names)):
-        modelbase[names[i]] = [models[i], np.array(models[i].predict(x_val, verbose=False))]
+        modelbase[names[i]] = [models[i], np.array(models[i].predict(x_val, verbose=1))]
     return modelbase
 
 
@@ -38,10 +47,7 @@ def print_bagging_ensemble_statistic(modelset, y_val):
     for model in modelset:
         pred_summ += model[1]
     y_pred_en = np.array([np.argmax(i) for i in pred_summ])
-    print("ACCURACY SCORE")
-    print("\nensemble bagging:", get_accuracy(y_pred_en, y_val))
+    print("SCORE")
+    print("\nensemble accuracy:", accuracy_score(y_val, y_pred_en))
+    print("\nensemble f1_score:", f1_score(y_val, y_pred_en, average="macro"))
     return y_pred_en
-
-
-def get_accuracy(y_pred, y_true):
-    return round(np.sum(y_pred == y_true) / len(y_pred), 4)

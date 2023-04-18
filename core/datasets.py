@@ -48,7 +48,8 @@ def get_ds(file_train, file_test, transform=None, batch_size=512, one_hot=False,
     if one_hot:
         train_labels_full = tf.one_hot(train_labels_full, 10).numpy()
 
-    train_ds_x, val_ds_x, train_ds_y, val_ds_y = train_test_split(train_images_full, train_labels_full, test_size=val_size, random_state=1234)
+    train_ds_x, val_ds_x, train_ds_y, val_ds_y = train_test_split(train_images_full, train_labels_full,
+                                                                  test_size=val_size, random_state=1234)
 
     val_ds = tf.data.Dataset.from_tensor_slices((val_ds_x / 255., val_ds_y))
     val_ds = val_ds.batch(batch_size)
@@ -58,3 +59,30 @@ def get_ds(file_train, file_test, transform=None, batch_size=512, one_hot=False,
     test_ds = data_test['images'] / 255.
 
     return train_ds, val_ds, test_ds
+
+
+def get_logit_ds(model_list, back=2):
+    train_ds = open_f('repaired_data_train', back=back)
+
+    model_logits = [pickle.load(open(f'{"../" * back}models/logits_train/model{model_name}', 'rb')) for model_name in model_list]
+
+    train_ds['images'] = np.stack(model_logits, axis=1)
+
+    shuffle = np.random.permutation(train_ds['images'].shape[0])
+    train_images_full = train_ds['images'][shuffle]
+    train_labels_full = train_ds['labels'][shuffle]
+
+    train_labels_full = tf.one_hot(train_labels_full, 10).numpy()
+
+    train_ds_x, val_ds_x, train_ds_y, val_ds_y = train_test_split(train_images_full, train_labels_full,
+                                                                  test_size=0.07, random_state=1234)
+
+    val_ds = tf.data.Dataset.from_tensor_slices((val_ds_x / 255., val_ds_y))
+    val_ds = val_ds.batch(100)
+
+    train_ds = tf.data.Dataset.from_tensor_slices((train_ds_x, train_ds_y))
+    train_ds = train_ds.batch(100)
+
+    return train_ds, val_ds
+
+

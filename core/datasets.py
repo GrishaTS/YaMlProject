@@ -74,9 +74,15 @@ def get_logit_ds(model_list, back=2):
 
     train_labels_full = tf.one_hot(train_labels_full, 10).numpy()
 
-    train_ds = tf.data.Dataset.from_tensor_slices((train_images_full, train_labels_full))
+    train_ds_x, val_ds_x, train_ds_y, val_ds_y = train_test_split(train_images_full, train_labels_full,
+                                                                  test_size=0.07, random_state=1234)
+
+    val_ds = tf.data.Dataset.from_tensor_slices((val_ds_x / 255., val_ds_y))
+    val_ds = val_ds.batch(100)
+
+    train_ds = tf.data.Dataset.from_tensor_slices((train_ds_x, train_ds_y))
     train_ds = train_ds.batch(100)
 
-    return train_ds
+    return train_ds, val_ds
 
 

@@ -8,3 +8,5 @@
 ## Метрики(accuracy): 
 - Public score: 0.96813
 - Private score: 0.96582
+## Датасеты:
+[Ссылка на гугл диск](https://drive.google.com/drive/folders/1BzPSPE-R8oLjmEKlUzd2prSaOEqOhqAS)

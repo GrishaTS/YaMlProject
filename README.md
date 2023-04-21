@@ -5,6 +5,6 @@
 
 Для полного ознакомления с проектом советую прочитать файл [main.ipynb](https://github.com/GrishaTS/YaMlProject/blob/main/ProjectProtection/main.ipynb), в котором кратко рассказано все тонкости написания проекта.
 
-Метрики(accuracy): 
+## Метрики(accuracy): 
 - Public score: 0.96813
 - Private score: 0.96582

@@ -5,7 +5,6 @@ from PIL import Image
 import math
 import tensorflow as tf
 import numpy as np
-import random
 from sklearn.model_selection import train_test_split
 
 
